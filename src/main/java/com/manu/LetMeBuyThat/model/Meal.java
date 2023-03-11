@@ -15,7 +15,7 @@ public class Meal {
     private String name;
 
     @JsonManagedReference
-    @OneToMany( cascade = CascadeType.ALL, mappedBy = "meal")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "meal", orphanRemoval = true)
     private List<Ingredient> ingredients = new ArrayList<>();
 
     public Meal() {}
@@ -25,6 +25,12 @@ public class Meal {
     }
 
     public Meal(String name, List<Ingredient> ingredients) {
+        this.name = name;
+        this.ingredients = ingredients;
+    }
+
+    public Meal(Long id, String name, List<Ingredient> ingredients) {
+        Id = id;
         this.name = name;
         this.ingredients = ingredients;
     }

@@ -35,4 +35,30 @@ public class HomeController {
         mealService.save(meal);
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @PutMapping("/updatemeal")
+    public ResponseEntity<Meal> updateMeal(@RequestBody Meal mealdata) {
+
+        Meal meal = mealdata;
+        meal.getIngredients().forEach(s -> s.setMeal(meal));
+        mealService.save(meal);
+        return ResponseEntity.ok(meal);
+    }
+
+    @PostMapping("/updatemealname")
+    public ResponseEntity updateMealName(@RequestBody Meal mealData) {
+        Meal meal = mealService.getReferenceById(mealData.getId());
+        meal.setName(mealData.getName());
+        mealService.save(meal);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/meal/{id}")
+    public ResponseEntity<Meal> deleteMeal(@PathVariable Long id) {
+        Meal meal = mealService.findById(id);
+        mealService.delete(meal);
+
+        return ResponseEntity.ok(meal);
+    }
 }
