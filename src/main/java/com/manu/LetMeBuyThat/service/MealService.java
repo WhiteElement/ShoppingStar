@@ -20,4 +20,8 @@ public class MealService {
     public Meal findById(Long id) {
         return mealRepository.findById(id).get();
     }
+
+    public void save(Meal meal) {
+        mealRepository.save(meal);
+    }
 }

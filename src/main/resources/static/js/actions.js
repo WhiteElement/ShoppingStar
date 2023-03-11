@@ -47,9 +47,17 @@ function transferToShoppingList() {
     const shoppinglist = document.querySelector("#shoppinglist");
     for(i=0; i<ingredientList.length; i++) {
         let listitem = document.createElement("li");
-        listitem.innerHTML = ingredientList[i].querySelector("input").value + ' ' +
-                             ingredientList[i].querySelector("span").textContent +
-                             '<a href="#">&#9998;</a>';
+
+        if(ingredientList[0].querySelectorAll("input").length == 2) {
+            listitem.innerHTML = ingredientList[i].querySelector(".measure").value + ' ' +
+                                 ingredientList[i].querySelector(".name").value +
+                                 '<a href="#">&#9998;</a>';
+        } else {
+            listitem.innerHTML = ingredientList[i].querySelector("input").value + ' ' +
+                                 ingredientList[i].querySelector("span").textContent +
+                                 '<a href="#">&#9998;</a>';
+        }
+
         shoppinglist.appendChild(listitem);
     };
 }
@@ -73,11 +81,13 @@ function openNewMealDialog() {
 }
 
 function newIngredient(){
-    const ingredientList = document.querySelector("#ingredients");
+    const ingredientList = getIngredients();
 
     let node = document.createElement("li");
     let input1 = document.createElement("input");
+    input1.classList.add("measure");
     let input2 = document.createElement("input");
+    input2.classList.add("name");
     let deletebutton = document.createElement("button");
     deletebutton.onclick = function() {deleteIngredient(this)};
     deletebutton.innerText = "- Löschen";
@@ -87,10 +97,38 @@ function newIngredient(){
     ingredientList.appendChild(node);
 }
 
-function saveMeal() {
-    alert("nocht nicht belegt");
+async function saveMeal() {
+    const IngredientList = getIngredients().querySelectorAll("li");
+    let ingredients = [];
+    for(i=0; i<IngredientList.length; i++) {
+        let ingredient = {
+            measure : IngredientList[i].querySelector(".measure").value,
+            name : IngredientList[i].querySelector(".name").value
+        };
+        ingredients[i] = ingredient;
+    }
+
+    let meal = {
+        name : document.querySelector("h2#selectedMeal > input").value,
+        ingredients : ingredients
+    }
+
+    fetch("/savemeal", {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(meal)
+    })
+    .then(window.location.reload());
+
 }
 
 function deleteIngredient(deletebutton) {
     deletebutton.parentElement.remove();
+}
+
+function getIngredients() {
+    const ingredientList = document.querySelector("#ingredients");
+    return ingredientList;
 }
