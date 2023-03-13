@@ -5,6 +5,7 @@
     <title>LetMeBuyThat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script type="text/javascript" th:src="@{/js/actions.js}"></script>
+    <script type="text/javascript" th:src="@{/js/mail.js}"></script>
 </head>
 <body>
     <h1>ShoppingStar</h1>
@@ -33,12 +34,8 @@
                 <h2 id="selectedMeal">Gericht</h2>
                 <br>
                 <h4>Zutaten:</h4>
-                <button onclick="openMealEdit()">Gericht bearbeiten</button>
+                <button onclick="openMealEdit()" id="alreadymealedit">Gericht bearbeiten</button>
                 <ul id="ingredients" data-edit="0">
-                    <li><input type="text" value="400g"><span>Mehl</span></li>
-                    <li><input type="text" value="2"><span>Eier</span></li>
-                    <li><input type="text" value="100g"><span>Salami</span></li>
-                    <li><input type="text" value="250g"><span>Geriebener</span></li>
                 </ul>
                 <button onclick="transferToShoppingList()">Auf den Einkaufszettel</button>
             </div>
@@ -47,10 +44,18 @@
                 <h2>Einkaufszettel</h2>
                 <ul id="shoppinglist">
                 </ul>
-                <button>Abschicken</button>
-                <button>Einkaufszettel löschen</button>
                 <p>nachfragen welche Emails und unsere 2 von einer Datenbank holen</p>
                 <p>Einkaufszettel speichern</p>
+                <button onclick="getAllAdresses()">Abschicken</button>
+                <button>Einkaufszettel löschen</button>
+                <div>
+                    <div id="addmailscontainer" style="display:none;">
+                        <input type="email">
+                        <button onclick="saveAdress()">Email Speichern</button>
+                    </div>
+                    <div id="mails"></div>
+                </div>
+
             </div>
 
         </div>

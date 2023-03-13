@@ -23,15 +23,20 @@ function removeSaveButton() {
     }
 }
 
+function show(cssSelector) {
+    document.querySelector(cssSelector).style.display = "";
+}
+
 function newItemSelected() {
     removeSaveButton();
+    show("#alreadymealedit");
     const item = getSelectedItem();
-    let heading = document.querySelector("#selectedMeal");
+    let heading = getHeading();
     const MealId = item.selectedOptions[0].dataset.id;
     heading.innerHTML = item.value + ' <a href="#" onclick="openMealNameEdit()">&#9998;</a>';
     heading.setAttribute("data-id", MealId);
 
-    const listOfIngredients = document.querySelector("#ingredients");
+    const listOfIngredients = getIngredients();
     listOfIngredients.textContent = '';
 
     fetch("/meal?id=" + MealId)
@@ -75,18 +80,18 @@ function transferToShoppingList() {
 
 function isInEditMode(elem) {
     if(elem.querySelector("input") != null) {
-        console.log("edit mode")
         return true;
     }
     else {
-        console.log("not in edit mode");
         return false;
     }
 }
 
 function openNewMealDialog() {
+
     const heading = document.querySelector("#selectedMeal");
     if(!isInEditMode(heading)) {
+        document.querySelector("#alreadymealedit").style.display = "none";
         heading.innerHTML='<input type="text" placeholder="Wie heißt das Gericht?">';
 
         const ingredientList = document.querySelector("#ingredients");
@@ -135,28 +140,41 @@ function openMealEdit() {
     const ingredients = ingredientList.querySelectorAll("li");
 
     if(isMealEditingMode()) {
+        document.querySelector("#alreadymealedit").innerText = "Gericht bearbeiten";
         ingredientList.setAttribute("data-edit","0");
         ingredientList.style.backgroundColor = "";
 
         for(i=0; i<ingredients.length; i++) {
             ingredients[i].querySelector("button").remove();
         }
+        console.log("buttons getting deleted");
         document.querySelector("#deletebutton").remove();
+        document.querySelector("#updatebutton").remove();
+        document.querySelector("#newingredientbutton").remove();
 
     } else {
+        document.querySelector("#alreadymealedit").innerText = "zurück";
         ingredientList.setAttribute("data-edit","1");
+        
         let deletebutton = document.createElement("button");
-        deletebutton.innerText = "löschen";
-        deletebutton.setAttribute("id", "deletebutton")
+        deletebutton.innerText = "Gericht löschen";
+        deletebutton.setAttribute("id", "deletebutton");
         deletebutton.onclick = function() {deleteMeal()};
 
-        let savebutton = document.createElement("button");
-        savebutton.innerText = "speichern";
-        savebutton.setAttribute("id", "savebutton")
-        savebutton.onclick = function() {saveMeal()};
+        let newingredientbutton = document.createElement("button");
+        newingredientbutton.textContent = "+ neue Zutat";
+        newingredientbutton.setAttribute("id","newingredientbutton");
+        newingredientbutton.onclick = function() {newIngredient()};
+        document.querySelector("#alreadymealedit").after(newingredientbutton);
+        
+
+        let updatebutton = document.createElement("button");
+        updatebutton.innerText = "Änderungen speichern";
+        updatebutton.setAttribute("id", "updatebutton")
+        updatebutton.onclick = function() {updateMeal()};
 
         document.querySelector("#center").appendChild(deletebutton);
-        document.querySelector("#center").appendChild(savebutton);
+        document.querySelector("#center").appendChild(updatebutton);
 
         ingredientList.style.backgroundColor = "lightblue";
 
@@ -186,6 +204,39 @@ function newIngredient(){
     ingredientList.appendChild(node);
 }
 
+async function updateMeal() {
+    const IngredientList = getIngredients().querySelectorAll("li");
+    let ingredients = [];
+    for(i=0; i<IngredientList.length; i++) {
+        let ingredient = {
+            measure : IngredientList[i].querySelector(".measure").value,
+            name : ""
+        };
+        if(IngredientList[i].querySelector(".name").tagName == "INPUT") {
+            ingredient.name = IngredientList[i].querySelector(".name").value;
+        } else {
+            ingredient.name = IngredientList[i].querySelector(".name").textContent;
+        }
+        ingredients[i] = ingredient;
+    }
+    
+    meal = {
+        id : getHeading().dataset.id,
+        name : document.querySelector("h2#selectedMeal").firstChild.textContent,
+        ingredients : ingredients
+    }
+
+    fetch("/updatemeal", {
+        method : "PUT",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(meal)
+    })
+    .then(response => window.location.reload())
+    .then(show("#alreadymealedit"));
+}
+
 async function saveMeal() {
     const IngredientList = getIngredients().querySelectorAll("li");
     let ingredients = [];
@@ -195,32 +246,20 @@ async function saveMeal() {
             name : ""
         };
         if(isMealEditingMode()){
-            ingredient.name = IngredientList[i].querySelector(".name").textContent
+            console.log(IngredientList[i].querySelector(".name").tagName);
+            if(IngredientList[i].querySelector(".name").tagName == "INPUT") {
+                ingredient.name = IngredientList[i].querySelector(".name").value;
+            } else {
+                ingredient.name = IngredientList[i].querySelector(".name").textContent;
+            }
+            
         } else {
             ingredient.name = IngredientList[i].querySelector(".name").value
         };
         ingredients[i] = ingredient;
     }
 
-    let meal;
-    if(isMealEditingMode()) {
-        meal = {
-            id : getHeading().dataset.id,
-            name : document.querySelector("h2#selectedMeal").firstChild.textContent,
-            ingredients : ingredients
-        }
-
-        fetch("/updatemeal", {
-            method : "PUT",
-            headers : {
-                "Content-Type" : "application/json"
-            },
-            body : JSON.stringify(meal)
-        })
-        .then(response => window.location.reload());
-
-    } else {
-        meal = {
+    let meal = {
             name : document.querySelector("h2#selectedMeal > input").value,
             ingredients : ingredients
         }
@@ -233,10 +272,6 @@ async function saveMeal() {
             body : JSON.stringify(meal)
         })
         .then(response => window.location.reload());
-    }
-
-
-
 }
 
 function deleteIngredient(deletebutton) {
@@ -244,29 +279,30 @@ function deleteIngredient(deletebutton) {
 }
 
 function getIngredients() {
-    const ingredientList = document.querySelector("#ingredients");
-    return ingredientList;
+    return ingredientList = document.querySelector("#ingredients");
 }
 
 function openMealNameEdit() {
-    const heading = getHeading();
-    convertToInputField(heading);
+    convertToInputField(getHeading());
 }
 
 function getHeading() {
-    const heading = document.querySelector("#selectedMeal");
-    return heading;
+    return heading = document.querySelector("#selectedMeal");
 }
 
 function convertToInputField(elemToConvert) {
     document.querySelector("h2#selectedMeal > a").style.display = 'none';
     const inputString = '<input type="text" onfocusout="changeMealName(this)" onchange="changeMealName(this)">';
     const text = elemToConvert.innerText;
-    console.log(text);
     elemToConvert.innerHTML = inputString;
-    elemToConvert.firstChild.focus();
-    elemToConvert.firstChild.firstvalue = '';
-    elemToConvert.firstChild.value = text;
+    
+    focusAndCursorToEnd(elemToConvert, text);
+}
+
+function focusAndCursorToEnd(inpuElem, text) {
+    inpuElem.firstChild.focus();
+    inpuElem.firstChild.firstvalue = '';
+    inpuElem.firstChild.value = text;
 }
 
 async function changeMealName(h2input) {
