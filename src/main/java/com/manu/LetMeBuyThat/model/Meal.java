@@ -1,6 +1,7 @@
 package com.manu.LetMeBuyThat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -9,12 +10,12 @@ import java.util.List;
 @Entity
 public class Meal {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
     private String name;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToMany( cascade = CascadeType.ALL, mappedBy = "meal")
+    @JsonManagedReference
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "meal", orphanRemoval = true)
     private List<Ingredient> ingredients = new ArrayList<>();
 
     public Meal() {}
@@ -24,6 +25,12 @@ public class Meal {
     }
 
     public Meal(String name, List<Ingredient> ingredients) {
+        this.name = name;
+        this.ingredients = ingredients;
+    }
+
+    public Meal(Long id, String name, List<Ingredient> ingredients) {
+        Id = id;
         this.name = name;
         this.ingredients = ingredients;
     }
