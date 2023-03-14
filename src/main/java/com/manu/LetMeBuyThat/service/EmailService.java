@@ -20,4 +20,12 @@ public class EmailService {
     public void save(Email email) {
         emailRepository.save(email);
     }
+
+    public Email findById(Long id) {
+        return emailRepository.findById(id).get();
+    }
+
+    public void delete(Email email) {
+        emailRepository.delete(email);
+    }
 }

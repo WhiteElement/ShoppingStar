@@ -4,14 +4,15 @@ import com.manu.LetMeBuyThat.model.Email;
 import com.manu.LetMeBuyThat.model.EmailWrapper;
 import com.manu.LetMeBuyThat.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+
 
 @Controller
 public class EmailController {
@@ -19,21 +20,31 @@ public class EmailController {
     @Autowired
     EmailService emailService;
 
-    //send einkaufszettel to mail adresses
+    @Autowired
+    JavaMailSender javaMailSender;
+
     @PostMapping(value = "/sendto")
     public ResponseEntity sendShoppingListTo(@RequestBody EmailWrapper emails) {
 
-        for(Email email : emails.getEmails()) {
-            System.out.println(email.getId());
-            System.out.println(email.getAdress());
-        }
-        //send logic
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo("whiteelement1991@web.de");
+        msg.setSubject("Einkaufszettel vom 14.03.23");
+        msg.setFrom("shoppingstar-no.reply@outlook.com");
+        msg.setText("test");
+        javaMailSender.send(msg);
+
+//        for(Email email : emails.getEmails()) {
+//            SimpleMailMessage msg = new SimpleMailMessage();
+//            msg.setTo("whiteelement1991@web.de");
+//            msg.setSubject("Einkaufszettel vom 14.03.23");
+//            msg.setText("test");
+//            javaMailSender.send(msg);
+//        }
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
 
-    //get all email adresses
     @GetMapping("/emails")
     public @ResponseBody List<Email> getAllEmails() {
 
@@ -44,6 +55,14 @@ public class EmailController {
     @PostMapping("/saveemail")
     public ResponseEntity saveEmailAdress(@RequestBody Email email) {
         emailService.save(email);
+
+        return ResponseEntity.ok(email);
+    }
+
+    @DeleteMapping("/deletemail")
+    public ResponseEntity<Email> deleteEmail(@RequestParam Long id) {
+        Email email = emailService.findById(id);
+        emailService.delete(email);
 
         return ResponseEntity.ok(email);
     }

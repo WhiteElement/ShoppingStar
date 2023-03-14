@@ -14,9 +14,10 @@ function getAllAdresses() {
 function generateCheckbox(data) {
     const mailscontainer  = document.querySelector("#mails");
     
+    preparefield(mailscontainer);
+    
     for (i = 0; i < data.length; i++) {
-        console.log(data[i]);
-        
+
         const inputbox = document.createElement("input");
         inputbox.type = "checkbox";
         inputbox.value = data[i].adress;
@@ -25,23 +26,48 @@ function generateCheckbox(data) {
         const labelforbox = document.createElement("label");
         labelforbox.textContent = data[i].adress;
 
+        const xbtn = document.createElement("a");
+        xbtn.innerHTML = "&#10006;"
+        xbtn.setAttribute("data-id", data[i].id);
+        xbtn.onclick = function() {deleteEmail(this)};
+        xbtn.href = "#";
+
+        if(i>0){
+            mailscontainer.appendChild(document.createElement("br"));
+        }
         mailscontainer.appendChild(inputbox);
         mailscontainer.appendChild(labelforbox);
+        mailscontainer.appendChild(xbtn);
     }
+
+    const addbtn = document.createElement("button");
+    addbtn.onclick = function() {openNewMailEdit()};
+    addbtn.setAttribute("id", "addbtn");
+    addbtn.textContent = "+";
 
     const sendbutton = document.createElement("button");
     sendbutton.onclick = function() {sendShoppingList();};
-    sendbutton.textContent = "an Emails senden";
+    sendbutton.setAttribute("id", "sendbutton");
+    sendbutton.textContent = "senden";
 
+    mailscontainer.appendChild(document.createElement("br"));
+    mailscontainer.appendChild(addbtn);
     mailscontainer.appendChild(sendbutton);
 }
 
-function saveAdress() {
+function preparefield(mailscontainer) {
+    mailscontainer.textContent = "";
+    if (mailscontainer.querySelector("#sendbutton")) {
+        mailscontainer.querySelector("#sendbutton").remove();
+    };
+}
+
+async function saveAdress() {
     const email = {
         adress : document.querySelector("#addmailscontainer > input").value
     }
 
-    fetch("/saveemail", {
+    await fetch("/saveemail", {
         method : "POST",
         headers : {
             "Content-Type" : "application/json"
@@ -52,7 +78,7 @@ function saveAdress() {
 }
 
 function areEmails(data) {
-    console.log(data.length);
+
     if(data.length < 1) {
         return false;
     } else {
@@ -87,4 +113,23 @@ function getSelectedEmails() {
         }
     }
     return emails;
+}
+
+async function deleteEmail(btn) {
+    const mailid = btn.dataset.id;
+    const url = "/deletemail" + "?id=" + mailid;
+
+    await fetch(url, {
+        method: "DELETE",
+        headers : {
+            "Content-Type" : "application/json"
+        }
+    })
+    .then(getAllAdresses());
+
+}
+
+function openNewMailEdit() {
+    const container = document.querySelector("#addmailscontainer");
+    container.style.display = '';
 }

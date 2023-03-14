@@ -44,16 +44,17 @@
                 <h2>Einkaufszettel</h2>
                 <ul id="shoppinglist">
                 </ul>
-                <p>nachfragen welche Emails und unsere 2 von einer Datenbank holen</p>
                 <p>Einkaufszettel speichern</p>
-                <button onclick="getAllAdresses()">Abschicken</button>
+                <button onclick="getAllAdresses()">An Email schicken</button>
                 <button>Einkaufszettel löschen</button>
                 <div>
+                    <div id="mails"></div>
                     <div id="addmailscontainer" style="display:none;">
+                        <h4>neue Email hinzufügen</h4>
                         <input type="email">
                         <button onclick="saveAdress()">Email Speichern</button>
                     </div>
-                    <div id="mails"></div>
+
                 </div>
 
             </div>
