@@ -74,7 +74,7 @@ async function saveAdress() {
         },
         body : JSON.stringify(email)
     })
-    .then(getAllAdresses());
+    .then(() => getAllAdresses());
 }
 
 function areEmails(data) {
@@ -125,7 +125,7 @@ async function deleteEmail(btn) {
             "Content-Type" : "application/json"
         }
     })
-    .then(getAllAdresses());
+    .then(() => getAllAdresses());
 
 }
 
