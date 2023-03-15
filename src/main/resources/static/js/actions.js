@@ -68,16 +68,20 @@ function transferToShoppingList() {
             listitem.innerHTML = '<span>' + ingredientList[i].querySelector(".measure").value + ' ' +
                                  ingredientList[i].querySelector(".name").value +
                                  '</span>' +
-                                 '<a href="#">&#9998;</a>';
+                                 '<a onclick="remove(this)" href="#">&#10006;</a>';
         } else {
             listitem.innerHTML = '<span>' + ingredientList[i].querySelector("input").value + ' ' +
                                  ingredientList[i].querySelector("span").textContent +
                                  '</span>' +
-                                 '<a href="#">&#9998;</a>';
+                                 '<a onclick="remove(this)" href="#">&#10006;</a>';
         }
 
         shoppinglist.appendChild(listitem);
     };
+}
+
+function remove(linktag) {
+    linktag.parentElement.remove();
 }
 
 function isInEditMode(elem) {

@@ -32,6 +32,8 @@ async function openShoppingListsPop() {
     popup.classList.remove("d-none");
     const response = await loadAllShoppingLists();
     populatePopup(popup, response);
+    createPreviewWindow(popup);
+    addExitBtn(popup);
 
 }
 
@@ -49,6 +51,7 @@ function populatePopup(container, shoppinglists) {
         list.href = "#";
         list.setAttribute("data-items", shoppinglists[i].items);
         list.onclick = function() {getShoppinglist(this.getAttribute('data-items'), container)}
+        list.onmouseover = function() {displayItems(this);}
         list.textContent = shoppinglists[i].updateDate;
       
         listcontainer.appendChild(list);
@@ -64,8 +67,38 @@ function getShoppinglist(shoppinglistitems, container) {
     shoppinglist.textContent = '';
     for(i=0; i<items.length; i++) {
         const item = document.createElement("li");
-        item.textContent = items[i];
+        item.innerHTML = '<span>' 
+                        + items[i]
+                        +'</span>'
+                        +'<a onclick="remove(this)" href="#">&#10006;</a>';
 
         shoppinglist.appendChild(item);
     }
+}
+
+function createPreviewWindow(popupContainer) {
+    const listcontainer = popupContainer.querySelector("#listcontainer");
+
+    const outputbox = document.createElement("span");
+    outputbox.setAttribute("id", "output");
+    listcontainer.appendChild(outputbox);
+}
+
+function displayItems(linktag) {
+    const output = document.querySelector("#output");
+    output.textContent = linktag.dataset.items;
+}
+
+function addExitBtn(popupcontainer) {
+    const btn = document.createElement("a");
+    btn.href = "#";
+    btn.onclick = function () {closePop();};
+    btn.innerHTML = "&#10006;";
+
+    popupcontainer.querySelector("#listcontainer").appendChild(btn);
+}
+
+function closePop() {
+    const popup = document.querySelector("#shoppinglistspop");
+    popup.classList.add("d-none");
 }
