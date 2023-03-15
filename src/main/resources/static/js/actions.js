@@ -65,12 +65,14 @@ function transferToShoppingList() {
         let listitem = document.createElement("li");
 
         if(ingredientList[0].querySelectorAll("input").length == 2) {
-            listitem.innerHTML = ingredientList[i].querySelector(".measure").value + ' ' +
+            listitem.innerHTML = '<span>' + ingredientList[i].querySelector(".measure").value + ' ' +
                                  ingredientList[i].querySelector(".name").value +
+                                 '</span>' +
                                  '<a href="#">&#9998;</a>';
         } else {
-            listitem.innerHTML = ingredientList[i].querySelector("input").value + ' ' +
+            listitem.innerHTML = '<span>' + ingredientList[i].querySelector("input").value + ' ' +
                                  ingredientList[i].querySelector("span").textContent +
+                                 '</span>' +
                                  '<a href="#">&#9998;</a>';
         }
 

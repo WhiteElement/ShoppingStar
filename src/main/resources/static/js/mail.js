@@ -98,6 +98,7 @@ function sendShoppingList() {
         },
         body : JSON.stringify(emails)
     });
+    console.log(JSON.stringify(emails));
 }
 
 function getSelectedEmails() {

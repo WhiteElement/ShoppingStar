@@ -1,0 +1,17 @@
+#shoppinglistspop {
+    z-index: 1;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    transition: all 0.3s ease;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.25);
+}
+
+#listcontainer {
+    width: 350px;
+    height: 350px;
+    background-color: white;
+
+}
