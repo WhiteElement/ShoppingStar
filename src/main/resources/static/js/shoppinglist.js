@@ -10,7 +10,9 @@ async function saveShoppingList() {
             "Content-Type" : "application/json"
         },
         body : JSON.stringify(shoppinglist)
-    });
+    })
+    .then(data => displayToast("Shopping Star","Einkaufsliste gespeichert"));
+
 }
 
 function getItems() {
@@ -101,4 +103,12 @@ function addExitBtn(popupcontainer) {
 function closePop() {
     const popup = document.querySelector("#shoppinglistspop");
     popup.classList.add("d-none");
+}
+
+function displayToast(heading, text) {
+            const alert = document.querySelector(".toast");
+            alert.querySelector(".toast-body").textContent = text;
+            alert.querySelector(".me-auto").textContent = heading;
+            const toast = new bootstrap.Toast(alert);
+            toast.show();
 }

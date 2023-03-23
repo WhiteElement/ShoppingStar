@@ -87,17 +87,27 @@ function areEmails(data) {
 }
 
 function sendShoppingList() {
-    const emails = {
+    const emailwrapper = {
         emails : getSelectedEmails()
     };
+    
+    const shoppinglist = {
+        items : getItems(),
+    }
+
+    const emaildto = {
+        emailWrapper : emailwrapper,
+        shoppingList : shoppinglist
+    }
     
     fetch("/sendto", {      
         method: "POST",
         headers : {
             "Content-Type" : "application/json"
         },
-        body : JSON.stringify(emails)
-    });
+        body : JSON.stringify(emaildto),
+    })
+    .then(displayToast());
 }
 
 function getSelectedEmails() {
@@ -133,3 +143,10 @@ function openNewMailEdit() {
     const container = document.querySelector("#addmailscontainer");
     container.style.display = '';
 }
+
+function displayToast() {
+    const alert = document.querySelector(".toast");
+    const toast = new bootstrap.Toast(alert);
+    toast.show()
+}
+

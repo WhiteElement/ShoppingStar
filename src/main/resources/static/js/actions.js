@@ -27,9 +27,35 @@ function show(cssSelector) {
     document.querySelector(cssSelector).style.display = "";
 }
 
+function removeEditingTags(ingredientList, ingredients) {
+    document.querySelector("#alreadymealedit").innerText = "Gericht bearbeiten";
+    ingredientList.setAttribute("data-edit","0");
+    ingredientList.style.backgroundColor = "";
+
+    for(i=0; i<ingredients.length; i++) {
+        ingredients[i].querySelector("a").remove();
+    }
+    document.querySelector("#deletebutton").remove();
+    document.querySelector("#updatebutton").remove();
+    document.querySelector("#newingredientbutton").remove();
+}
+
+function resetIngredientsPageButtons() {
+    document.querySelector("#alreadymealedit").classList.remove("d-none");
+    document.querySelector("#toShoppingList").classList.remove("d-none");
+
+    const ingredientList = getIngredients();
+    const ingredients = ingredientList.querySelectorAll("li");
+
+    if(isMealEditingMode()) {
+        removeEditingTags(ingredientList, ingredients);
+
+    }
+}
+
 function newItemSelected() {
     removeSaveButton();
-    show("#alreadymealedit");
+    resetIngredientsPageButtons();
     const item = getSelectedItem();
     let heading = getHeading();
     const MealId = item.selectedOptions[0].dataset.id;
@@ -44,13 +70,15 @@ function newItemSelected() {
     .then((data) =>
         data.ingredients.forEach((ingredient) => {
             let node = document.createElement("li");
+            node.classList.add("list-group-item", "align-items-center", "d-flex");
             let subnode1 = document.createElement("input");
             subnode1.type = "text";
-            subnode1.classList.add("measure");
+            subnode1.classList.add("measure", "form-control", "me-2");
+            subnode1.style.width = "33%";
             subnode1.value = ingredient.measure;
             let subnode2 = document.createElement("span");
             subnode2.innerHTML = ingredient.name;
-            subnode2.classList.add("name");
+            subnode2.classList.add("name", "fst-italic");
             node.appendChild(subnode1);
             node.appendChild(subnode2);
             listOfIngredients.appendChild(node);
@@ -98,7 +126,7 @@ function openNewMealDialog() {
     const heading = document.querySelector("#selectedMeal");
     if(!isInEditMode(heading)) {
         document.querySelector("#alreadymealedit").style.display = "none";
-        heading.innerHTML='<input type="text" placeholder="Wie heißt das Gericht?">';
+        heading.innerHTML='<input type="text" class="form-control" placeholder="Wie heißt das Gericht?">';
 
         const ingredientList = document.querySelector("#ingredients");
         ingredientList.textContent = '';
@@ -106,11 +134,13 @@ function openNewMealDialog() {
         let button = document.createElement("button");
         button.textContent = "+ neue Zutat";
         button.onclick = function() {newIngredient()};
+        button.classList.add("btn", "btn-outline-success");
         ingredientList.appendChild(button);
 
         let savebutton = document.createElement("button");
         savebutton.setAttribute("id", "savebutton");
         savebutton.textContent = "Gericht speichern";
+        savebutton.classList.add("btn", "btn-success");
         savebutton.onclick = function() {saveMeal()};
         document.querySelector("#center").appendChild(savebutton);
     } else {
@@ -146,18 +176,7 @@ function openMealEdit() {
     const ingredients = ingredientList.querySelectorAll("li");
 
     if(isMealEditingMode()) {
-        document.querySelector("#alreadymealedit").innerText = "Gericht bearbeiten";
-        ingredientList.setAttribute("data-edit","0");
-        ingredientList.style.backgroundColor = "";
-
-        for(i=0; i<ingredients.length; i++) {
-            ingredients[i].querySelector("button").remove();
-        }
-        console.log("buttons getting deleted");
-        document.querySelector("#deletebutton").remove();
-        document.querySelector("#updatebutton").remove();
-        document.querySelector("#newingredientbutton").remove();
-
+        removeEditingTags(ingredientList, ingredients);
     } else {
         document.querySelector("#alreadymealedit").innerText = "zurück";
         ingredientList.setAttribute("data-edit","1");
@@ -165,28 +184,30 @@ function openMealEdit() {
         let deletebutton = document.createElement("button");
         deletebutton.innerText = "Gericht löschen";
         deletebutton.setAttribute("id", "deletebutton");
+        deletebutton.classList.add("btn","btn-outline-danger");
         deletebutton.onclick = function() {deleteMeal()};
 
         let newingredientbutton = document.createElement("button");
         newingredientbutton.textContent = "+ neue Zutat";
         newingredientbutton.setAttribute("id","newingredientbutton");
         newingredientbutton.onclick = function() {newIngredient()};
+        newingredientbutton.classList.add("btn", "btn-sm", "btn-outline-secondary", "ms-1");
         document.querySelector("#alreadymealedit").after(newingredientbutton);
         
 
         let updatebutton = document.createElement("button");
         updatebutton.innerText = "Änderungen speichern";
         updatebutton.setAttribute("id", "updatebutton")
+        updatebutton.classList.add("btn", "btn-outline-success", "ms-1");
         updatebutton.onclick = function() {updateMeal()};
 
-        document.querySelector("#center").appendChild(deletebutton);
-        document.querySelector("#center").appendChild(updatebutton);
-
-        ingredientList.style.backgroundColor = "lightblue";
+        document.querySelector("#itemcontainer").appendChild(deletebutton);
+        document.querySelector("#itemcontainer").appendChild(updatebutton);
 
         for(i=0; i<ingredients.length; i++) {
-            let button = document.createElement("button");
-            button.innerText = "löschen";
+            let button = document.createElement("a");
+            button.innerHTML = "&#10006";
+            button.href="#";
             button.onclick = function () {deleteIngredient(this)};
             ingredients[i].appendChild(button);
         }
@@ -197,13 +218,16 @@ function newIngredient(){
     const ingredientList = getIngredients();
 
     let node = document.createElement("li");
+    node.classList.add("list-group-item", "align-items-center", "d-flex");
     let input1 = document.createElement("input");
-    input1.classList.add("measure");
+    input1.classList.add("measure", "form-control", "me-2");
+    input1.style.width = "33%";
     let input2 = document.createElement("input");
-    input2.classList.add("name");
-    let deletebutton = document.createElement("button");
+    input2.classList.add("name", "form-control");
+    let deletebutton = document.createElement("a");
+    deletebutton.href = "#";
     deletebutton.onclick = function() {deleteIngredient(this)};
-    deletebutton.innerText = "- Löschen";
+    deletebutton.innerHTML = "&#10006;";
     node.appendChild(input1);
     node.appendChild(input2);
     node.appendChild(deletebutton);
@@ -297,8 +321,8 @@ function getHeading() {
 }
 
 function convertToInputField(elemToConvert) {
-    document.querySelector("h2#selectedMeal > a").style.display = 'none';
-    const inputString = '<input type="text" onfocusout="changeMealName(this)" onchange="changeMealName(this)">';
+    document.querySelector("h3#selectedMeal > a").style.display = 'none';
+    const inputString = '<input class="form-control" type="text" onfocusout="changeMealName(this)" onchange="changeMealName(this)">';
     const text = elemToConvert.innerText;
     elemToConvert.innerHTML = inputString;
     
