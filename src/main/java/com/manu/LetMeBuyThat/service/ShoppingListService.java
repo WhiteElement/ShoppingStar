@@ -20,4 +20,12 @@ public class ShoppingListService {
     public List<ShoppingList> findAll() {
         return shoppingListRepository.findAll();
     }
+
+    public ShoppingList findById(Long id) {
+        return shoppingListRepository.findById(id).get();
+    }
+
+    public void delete(ShoppingList shoppingList) {
+        shoppingListRepository.delete((shoppingList));
+    }
 }

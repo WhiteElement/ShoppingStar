@@ -89,6 +89,8 @@ function newItemSelected() {
 function transferToShoppingList() {
     const ingredientList = document.querySelector("#ingredients").querySelectorAll("li");
     const shoppinglist = document.querySelector("#shoppinglist");
+    document.querySelector("#saveshoppingbtn").classList.remove("d-none");
+    document.querySelector("#allmailsbtn").classList.remove("d-none");
     for(i=0; i<ingredientList.length; i++) {
         let listitem = document.createElement("li");
 

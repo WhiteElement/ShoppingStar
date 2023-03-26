@@ -15,10 +15,11 @@ function generateCheckbox(data) {
     const mailscontainer  = document.querySelector("#mails");
     
     preparefield(mailscontainer);
-    
-    for (i = 0; i < data.length; i++) {
+    mailscontainer.innerHTML = "<h4>Emails auswählen</h4>";
 
+    for (i = 0; i < data.length; i++) {
         const inputbox = document.createElement("input");
+        inputbox.classList.add("ms-3");
         inputbox.type = "checkbox";
         inputbox.value = data[i].adress;
         inputbox.setAttribute("data-id", data[i].id);
@@ -35,24 +36,32 @@ function generateCheckbox(data) {
         if(i>0){
             mailscontainer.appendChild(document.createElement("br"));
         }
+
         mailscontainer.appendChild(inputbox);
         mailscontainer.appendChild(labelforbox);
         mailscontainer.appendChild(xbtn);
     }
 
+    const btncontainer = document.createElement("div");
+    btncontainer.classList.add("d-flex", "justify-content-between", "mt-3");
+
     const addbtn = document.createElement("button");
-    addbtn.onclick = function() {openNewMailEdit()};
+    addbtn.onclick = function() {openNewMailEdit(this)};
     addbtn.setAttribute("id", "addbtn");
+    addbtn.setAttribute("data-edit", "0");
+    addbtn.classList.add("btn", "btn-sm", "btn-outline-secondary", "me-1");
     addbtn.textContent = "+";
 
     const sendbutton = document.createElement("button");
     sendbutton.onclick = function() {sendShoppingList();};
     sendbutton.setAttribute("id", "sendbutton");
-    sendbutton.textContent = "senden";
+    sendbutton.classList.add("btn", "btn-sm", "btn-outline-success");
+    sendbutton.textContent = "Abschicken";
 
     mailscontainer.appendChild(document.createElement("br"));
-    mailscontainer.appendChild(addbtn);
-    mailscontainer.appendChild(sendbutton);
+    btncontainer.appendChild(addbtn);
+    btncontainer.appendChild(sendbutton);
+    mailscontainer.appendChild(btncontainer);
 }
 
 function preparefield(mailscontainer) {
@@ -74,6 +83,8 @@ async function saveAdress() {
         },
         body : JSON.stringify(email)
     })
+    .then(() =>
+    document.querySelector("#addmailscontainer").style.display = "none")
     .then(() => getAllAdresses());
 }
 
@@ -107,7 +118,7 @@ function sendShoppingList() {
         },
         body : JSON.stringify(emaildto),
     })
-    .then(displayToast());
+    .then(displayToast("Shopping Star", "Einkaufszettel an Email Adressen gesendet"));
 }
 
 function getSelectedEmails() {
@@ -139,14 +150,23 @@ async function deleteEmail(btn) {
 
 }
 
-function openNewMailEdit() {
+function openNewMailEdit(btn) {
+    if(btn.dataset.edit == "1") {
+        const container = document.querySelector("#addmailscontainer");
+        container.style.display = "none";
+        btn.setAttribute("data-edit", "0");
+        return;
+    }
     const container = document.querySelector("#addmailscontainer");
     container.style.display = '';
+    btn.setAttribute("data-edit", "1");
 }
 
-function displayToast() {
-    const alert = document.querySelector(".toast");
-    const toast = new bootstrap.Toast(alert);
-    toast.show()
+function displayToast(heading, text) {
+            const alert = document.querySelector(".toast");
+            alert.querySelector(".toast-body").textContent = text;
+            alert.querySelector(".me-auto").textContent = heading;
+            const toast = new bootstrap.Toast(alert);
+            toast.show();
 }
 

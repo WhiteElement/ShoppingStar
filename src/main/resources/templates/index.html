@@ -45,9 +45,8 @@
             <div class="w-75 mx-3 border border-success-subtle rounded" id="center">
                     <h2 class="text-center px-1 py-2 bg-success bg-opacity-25 border-bottom border-success-subtle rounded">2.) Zutaten hinzufügen</h2>
                 <div class="mt-5 px-5" id="itemcontainer">
-                    <h3 id="selectedMeal"></h3> <!--Gericht-->
+                    <h3 id="selectedMeal"></h3>
                     <br>
-<!--                    <h4 id="ingredientsheading"></h4> &lt;!&ndash;Zutaten&ndash;&gt;-->
                     <button class="d-none btn btn-outline-success btn-sm" onclick="openMealEdit()" id="alreadymealedit">Gericht bearbeiten</button>
                     <ul class="list-group my-1" id="ingredients" data-edit="0">
                     </ul>
@@ -59,26 +58,40 @@
 
             <div class="w-75 mx-3 border border-success-subtle rounded" id="right">
                 <h2 class="text-center px-1 py-2 bg-success bg-opacity-25 border-bottom border-success-subtle rounded">3.) Einkaufszettel abschicken</h2>
-                <h3>Einkaufszettel</h3>
-                <ul id="shoppinglist">
-                </ul>
-                <button class="btn btn-success" onclick="saveShoppingList()">Einkaufszettel speichern</button>
-                <button class="btn btn-success" onclick="openShoppingListsPop()">Einkaufszettel laden</button>
-                <button class="btn btn-success" onclick="getAllAdresses()">An Email schicken</button>
-                <button class="btn btn-success" onclick="clearShoppingList()">Einkaufszettel löschen</button>
-                <div>
-                    <div id="shoppinglistspop" class="d-none d-flex justify-content-center align-items-center">
-                        <div id="listcontainer" class="d-flex flex-column">
-                            <h4>Gespeicherte Einkaufszettel</h4>
+                    <div class="mt-5 px-5 d-flex justify-content-between">
+                        <h3>Einkaufszettel</h3>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-outline-success me-1 btn-sm" onclick="openShoppingListsPop()">laden</button>
+                            <button class="btn btn-danger btn-sm" onclick="clearShoppingList()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                <div class="px-5">
+                    <ul id="shoppinglist">
+                    </ul>
+
+                    <button class="btn btn-success d-none" id="saveshoppingbtn" onclick="saveShoppingList()">Speichern</button>
+                    <button class="btn btn-success d-none" id="allmailsbtn" onclick="getAllAdresses()">Senden</button>
+
+                    <div>
+                        <div id="shoppinglistspop" class="d-none d-flex justify-content-center align-items-center">
+                            <div id="listcontainer" class="d-flex bg-secondary-subtle">
+                                <div id="list" class="w-50">
+                                </div>
+
+                            </div>
 
                         </div>
-
-                    </div>
-                    <div id="mails"></div>
-                    <div id="addmailscontainer" style="display:none;">
-                        <h4>neue Email hinzufügen</h4>
-                        <input type="email">
-                        <button onclick="saveAdress()">Email Speichern</button>
+                        <div class="mt-5" id="mails"></div>
+                        <div id="addmailscontainer" style="display:none;">
+                            <p>Email eingeben</p>
+                            <input type="email" class="form-control">
+                            <button onclick="saveAdress()" class="btn btn-sm btn-outline-secondary">hinzufügen</button>
+                        </div>
                     </div>
 
                 </div>
