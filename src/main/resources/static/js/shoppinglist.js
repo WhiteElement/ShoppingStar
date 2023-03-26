@@ -72,6 +72,7 @@ function deleteShoppingList(id) {
 function populatePopup(container, shoppinglists) {
     const listcontainer = container.querySelector("#list");
     listcontainer.textContent = '';
+    listcontainer.innerHTML = "<p><b>Einkaufszettel</b></p>";
     for(i=0; i<shoppinglists.length; i++) {
         const list = document.createElement("a");
         const date = new Date(shoppinglists[i].updateDate);
@@ -116,7 +117,6 @@ function getShoppinglist(shoppinglistitems, container) {
 
 function createPreviewWindow(popupContainer) {
     const listcontainer = document.createElement("div");
-    listcontainer.setAttribute("id", "list");
     listcontainer.setAttribute("id", "output");
     listcontainer.classList.add("w-50");
 
@@ -133,7 +133,8 @@ function displayItems(linktag) {
     let outputitems = linktag.dataset.items.split(",");
 
     for(i=0; i<outputitems.length; i++) {
-        let content = document.createTextNode(outputitems[i]);
+        let content = document.createElement("small");
+        content.textContent = outputitems[i];
         let nline = document.createElement("br");
         output.appendChild(content);
         output.appendChild(nline);
