@@ -1,60 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>LetMeBuyThat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script type="text/javascript" th:src="@{/js/actions.js}"></script>
     <script type="text/javascript" th:src="@{/js/mail.js}"></script>
+    <script type="text/javascript" th:src="@{/js/shoppinglist.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-    <h1>ShoppingStar</h1>
+    <h1 class="text-center my-3 p-5 bg-light-subtle">ShoppingStar</h1>
 
     <div id="mainContent" class="d-flex flex-column">
-        <div>
-            <p>hier sind infos etc</p>
-            <button>Artikel hinzufügen</button>
-        </div>
-        <div class="d-flex justify-content-around">
 
-            <div id="left">
-                <h2>Gerichte suchen</h2>
+        <div class="d-flex justify-content-around w-75 mx-auto">
 
-                <input type="text" placeholder="Tiramisu" onkeypress="searchForMeal(this)">
-                <br>
-                <select class="w-100" name="meals" id="meals" size="20" onchange="newItemSelected()">
-                    <option th:each="Meal : ${allMeals}" th:value="${Meal.name}" th:text="${Meal.name}" th:data-id="${Meal.Id}"></option>
-                </select>
-
-                <p>Nichts gefunden? <a href="#" onclick="openNewMealDialog()">Erstelle ein Neues</a></p>
-            </div>
-
-            <div id="center">
-                <h2 id="selectedMeal">Gericht</h2>
-                <br>
-                <h4>Zutaten:</h4>
-                <button onclick="openMealEdit()" id="alreadymealedit">Gericht bearbeiten</button>
-                <ul id="ingredients" data-edit="0">
-                </ul>
-                <button onclick="transferToShoppingList()">Auf den Einkaufszettel</button>
-            </div>
-
-            <div id="right">
-                <h2>Einkaufszettel</h2>
-                <ul id="shoppinglist">
-                </ul>
-                <p>Einkaufszettel speichern</p>
-                <button onclick="getAllAdresses()">An Email schicken</button>
-                <button>Einkaufszettel löschen</button>
+            <div class="w-75 mx-3 border border-success-subtle rounded d-flex flex-column" id="left">
                 <div>
-                    <div id="mails"></div>
-                    <div id="addmailscontainer" style="display:none;">
-                        <h4>neue Email hinzufügen</h4>
-                        <input type="email">
-                        <button onclick="saveAdress()">Email Speichern</button>
+                    <h2 class="text-center px-1 py-2 bg-success bg-opacity-25 border-bottom border-success-subtle rounded">1.) Gericht auswählen</h2>
+                    <div class="mt-5 px-5">
+                        <input class="form-control mb-3" type="text" placeholder="Tiramisu" onkeypress="searchForMeal(this)">
+                        <b>Deine Gerichte</b>
+                        <select class="w-100 form-select" name="meals" id="meals" size="10" onchange="newItemSelected()">
+                            <option th:each="Meal : ${allMeals}" th:value="${Meal.name}" th:text="${Meal.name}" th:data-id="${Meal.Id}"></option>
+                        </select>
+                        </div>
+                </div>
+
+                <div class="mt-5">
+                <h2 class="text-center">Oder:
+                    <br>
+                    <a href="#" class="text-success-emphasis" onclick="openNewMealDialog()">Erstelle ein Neues</a>
+                </h2>
+                </div>
+
+
+            </div>
+
+            <div class="w-75 mx-3 border border-success-subtle rounded" id="center">
+                    <h2 class="text-center px-1 py-2 bg-success bg-opacity-25 border-bottom border-success-subtle rounded">2.) Zutaten hinzufügen</h2>
+                <div class="mt-5 px-5" id="itemcontainer">
+                    <h3 id="selectedMeal"></h3>
+                    <br>
+                    <button class="d-none btn btn-outline-success btn-sm" onclick="openMealEdit()" id="alreadymealedit">Gericht bearbeiten</button>
+                    <ul class="list-group my-1" id="ingredients" data-edit="0">
+                    </ul>
+                </div>
+                <div class="px-5 mt-3 d-flex flex-row-reverse">
+                    <button class="d-none btn btn-success btn-lg" id="toShoppingList" onclick="transferToShoppingList()">Auf den Einkaufszettel</button>
+                </div>
+            </div>
+
+            <div class="w-75 mx-3 border border-success-subtle rounded" id="right">
+                <h2 class="text-center px-1 py-2 bg-success bg-opacity-25 border-bottom border-success-subtle rounded">3.) Einkaufszettel abschicken</h2>
+                    <div class="mt-5 px-5 d-flex justify-content-between">
+                        <h3>Einkaufszettel</h3>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-outline-success me-1 btn-sm" onclick="openShoppingListsPop()">laden</button>
+                            <button class="btn btn-danger btn-sm" onclick="clearShoppingList()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                <div class="px-5">
+                    <ul id="shoppinglist">
+                    </ul>
+
+                    <button class="btn btn-success d-none" id="saveshoppingbtn" onclick="saveShoppingList()">Speichern</button>
+                    <button class="btn btn-success d-none" id="allmailsbtn" onclick="getAllAdresses()">Senden</button>
+
+                    <div>
+                        <div id="shoppinglistspop" class="d-none d-flex justify-content-center align-items-center">
+                            <div id="listcontainer" class="d-flex bg-secondary-subtle pt-2 px-3">
+                                <div id="list" class="w-50">
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="mt-5" id="mails"></div>
+                        <div id="addmailscontainer" style="display:none;">
+                            <p>Email eingeben</p>
+                            <input type="email" class="form-control">
+                            <button onclick="saveAdress()" class="btn btn-sm btn-outline-secondary">hinzufügen</button>
+                        </div>
                     </div>
 
                 </div>
+                <div class="toast-container p-3 bottom-0 end-0">
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <img src="..." class="rounded me-2" alt="...">
+                            <strong class="me-auto">Gesendet</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            Der Einkaufszettel wurde via Email gesendet.
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
 
@@ -62,4 +112,7 @@
 
     </div>
 </body>
+<script>
+
+</script>
 </html>

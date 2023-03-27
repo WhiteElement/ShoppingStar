@@ -1,7 +1,9 @@
 package com.manu.LetMeBuyThat.controller;
 
 import com.manu.LetMeBuyThat.model.Email;
+import com.manu.LetMeBuyThat.model.EmailSenderDTO;
 import com.manu.LetMeBuyThat.model.EmailWrapper;
+import com.manu.LetMeBuyThat.model.ShoppingList;
 import com.manu.LetMeBuyThat.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,9 @@ public class EmailController {
     @Autowired
     EmailService emailService;
 
-
-    @PostMapping(value = "/sendto")
-    public ResponseEntity sendShoppingListTo(@RequestBody EmailWrapper emails) {
-
-        emailService.sendShoppingListToAdresses(emails);
-
+    @PostMapping("/sendto")
+    public ResponseEntity sendShoppingListTo(@RequestBody EmailSenderDTO emailSenderDTO) {
+        emailService.sendShoppingListToAdresses(emailSenderDTO);
         return new ResponseEntity(HttpStatus.OK);
     }
 
